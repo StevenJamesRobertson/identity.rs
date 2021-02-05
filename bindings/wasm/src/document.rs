@@ -2,7 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use identity::core::FromJson;
+use identity::core::Object;
 use identity::core::SerdeInto;
+use identity::crypto::merkle_key::Signer;
+use identity::crypto::merkle_key::SignerEd25519;
+use identity::crypto::SignatureOptions;
+use identity::did::verifiable;
 use identity::did::Document as Document_;
 use identity::did::MethodIdent;
 use identity::did::MethodScope;
@@ -11,9 +16,13 @@ use identity::iota::DocumentDiff;
 use identity::iota::IotaDocument;
 use identity::iota::Properties;
 use wasm_bindgen::prelude::*;
+// use identity::crypto::merkle_key::VerifierEd25519;
+use sha2::Sha256;
 
+use crate::crypto::Digest;
+use crate::crypto::KeyPair;
+use crate::crypto::MerkleProof;
 use crate::did::DID;
-use crate::key::KeyPair;
 use crate::method::Method;
 use crate::utils::err;
 
@@ -129,6 +138,33 @@ impl Document {
   pub fn verify(&self) -> bool {
     self.0.verify().is_ok()
   }
+
+  #[wasm_bindgen(js_name = signMerkleKeyEd25519)]
+  pub fn sign_merkle_key_ed25519(
+    &self,
+    data: &JsValue,
+    proof: &MerkleProof,
+    tag: &str,
+    key: &KeyPair,
+  ) -> Result<JsValue, JsValue> {
+    match proof.digest {
+      Digest::Sha256 => {
+        // let suite: SignerEd25519<'_, Sha256> = Signer::new_ed25519(&proof.0);
+        let suite: SignerEd25519<'_, Sha256> = todo!();
+        let options: SignatureOptions = self.0.as_document().resolve_options(tag).map_err(err)?;
+        let mut data: verifiable::Properties<Object> = data.into_serde().map_err(err)?;
+
+        suite.sign(&mut data, options, key.key.secret()).map_err(err)?;
+
+        JsValue::from_serde(&data).map_err(err)
+      }
+    }
+  }
+
+  // #[wasm_bindgen]
+  // pub fn verify_merkle_key(&self) -> bool {
+  //   todo!()
+  // }
 
   /// Generate the difference between two DID Documents and sign it
   #[wasm_bindgen]

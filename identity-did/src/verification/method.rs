@@ -15,6 +15,7 @@ use crate::error::Error;
 use crate::error::Result;
 use crate::verification::MethodBuilder;
 use crate::verification::MethodData;
+use crate::verification::MethodRef;
 use crate::verification::MethodType;
 
 /// A DID Document Verification Method
@@ -105,6 +106,10 @@ impl<T> Method<T> {
       .fragment()
       .ok_or(Error::InvalidMethodIdFragment)
       .map(|fragment| once('#').chain(fragment.chars()).collect())
+  }
+
+  pub fn into_ref(self) -> MethodRef<T> {
+    self.into()
   }
 }
 

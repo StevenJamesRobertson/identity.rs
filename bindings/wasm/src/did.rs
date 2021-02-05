@@ -5,7 +5,7 @@ use identity::core::decode_b58;
 use identity::iota::IotaDID;
 use wasm_bindgen::prelude::*;
 
-use crate::key::KeyPair;
+use crate::crypto::KeyPair;
 use crate::utils::err;
 
 // =============================================================================

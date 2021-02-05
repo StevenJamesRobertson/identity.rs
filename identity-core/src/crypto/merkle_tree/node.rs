@@ -40,6 +40,19 @@ impl<D: Digest> Node<D> {
   }
 }
 
+impl<D> Clone for Node<D>
+where
+  D: Digest,
+  Hash<D>: Clone,
+{
+  fn clone(&self) -> Self {
+    match self {
+      Self::L(hash) => Self::L(hash.clone()),
+      Self::R(hash) => Self::R(hash.clone()),
+    }
+  }
+}
+
 impl<D: Digest> Debug for Node<D> {
   fn fmt(&self, f: &mut Formatter<'_>) -> Result {
     match self {

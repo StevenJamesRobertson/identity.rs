@@ -8,9 +8,9 @@ use identity::did::MethodType;
 use identity::iota::IotaDID;
 use wasm_bindgen::prelude::*;
 
+use crate::crypto::Algorithm;
+use crate::crypto::KeyPair;
 use crate::did::DID;
-use crate::key::Algorithm;
-use crate::key::KeyPair;
 use crate::utils::err;
 
 pub const DEFAULT_TAG: &str = "authentication";

@@ -9,8 +9,8 @@ use identity::credential::VerifiableCredential;
 use identity::credential::VerifiablePresentation as VP;
 use wasm_bindgen::prelude::*;
 
+use crate::crypto::KeyPair;
 use crate::document::Document;
-use crate::key::KeyPair;
 use crate::utils::err;
 
 #[wasm_bindgen(inspectable)]

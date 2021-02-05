@@ -49,7 +49,7 @@ where
   Output<D>: PartialEq,
 {
   fn eq(&self, other: &Self) -> bool {
-    self.0.eq(&other.0)
+    self.ct_eq(other).into()
   }
 }
 

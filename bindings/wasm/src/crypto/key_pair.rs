@@ -8,23 +8,8 @@ use identity::crypto::PublicKey;
 use identity::crypto::SecretKey;
 use wasm_bindgen::prelude::*;
 
+use crate::crypto::Algorithm;
 use crate::utils::err;
-
-#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
-pub(crate) enum Algorithm {
-  #[serde(alias = "ed25519", alias = "ED25519")]
-  Ed25519,
-}
-
-impl Algorithm {
-  pub(crate) fn from_value(value: &JsValue) -> Result<Self, JsValue> {
-    if value.is_falsy() {
-      Ok(Self::Ed25519)
-    } else {
-      value.into_serde().map_err(err)
-    }
-  }
-}
 
 #[derive(Deserialize, Serialize)]
 struct JsonData {

@@ -62,6 +62,11 @@ impl<D> MTree<D>
 where
   D: Digest,
 {
+  /// Returns a slice of all nodes in the tree.
+  pub fn nodes(&self) -> &[Hash<D>] {
+    &self.nodes
+  }
+
   /// Returns the number of leaf nodes in the tree.
   pub fn leaves(&self) -> usize {
     tree::leaves(self.nodes.len())
@@ -151,6 +156,18 @@ where
   /// a pre-computed hash.
   pub fn verify_hash(&self, proof: &Proof<D>, hash: Hash<D>) -> bool {
     proof.verify(self.root(), hash)
+  }
+}
+
+impl<D: Digest> Clone for MTree<D>
+where
+  Hash<D>: Clone,
+{
+  fn clone(&self) -> Self {
+    Self {
+      nodes: self.nodes.clone(),
+      marker: PhantomData,
+    }
   }
 }
 
