@@ -23,7 +23,7 @@ tokio = { version = "1.2", default-features = false, features = ["sync"] }
 [dependencies.iota-crypto]
 git = "https://github.com/iotaledger/crypto.rs"
 rev = "dbb082870676b25b1867513792e51bd74ef1824d"
-features = ["blake2b"]
+features = ["blake2b", "ed25519", "hmac", "pbkdf", "sha"]
 
 [dependencies.iota-stronghold]
 path = "../../stronghold.rs/client"

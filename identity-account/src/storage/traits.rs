@@ -6,9 +6,9 @@ use identity_core::crypto::PublicKey;
 use std::path::Path;
 
 use crate::error::Result;
-use crate::utils::fs;
-use crate::storage::Signature;
 use crate::storage::KeyLocation;
+use crate::storage::Signature;
+use crate::utils::fs;
 
 #[async_trait::async_trait]
 pub trait StorageAdapter: Send + Sync {
@@ -37,9 +37,14 @@ pub trait StorageAdapter: Send + Sync {
 pub trait VaultAdapter: StorageAdapter {
   async fn generate_public_key(&mut self, type_: KeyType, location: KeyLocation<'_>) -> Result<PublicKey>;
 
-  async fn retrieve_public_key(&mut self, location: KeyLocation<'_>) -> Result<PublicKey>;
+  async fn retrieve_public_key(&mut self, type_: KeyType, location: KeyLocation<'_>) -> Result<PublicKey>;
 
-  async fn generate_signature(&mut self, payload: Vec<u8>, location: KeyLocation<'_>) -> Result<Signature>;
+  async fn generate_signature(
+    &mut self,
+    payload: Vec<u8>,
+    type_: KeyType,
+    location: KeyLocation<'_>,
+  ) -> Result<Signature>;
 }
 
 macro_rules! impl_storage_deref {
@@ -79,12 +84,17 @@ macro_rules! impl_vault_deref {
         (**self).generate_public_key(type_, location).await
       }
 
-      async fn retrieve_public_key(&mut self, location: KeyLocation<'_>) -> Result<PublicKey> {
-        (**self).retrieve_public_key(location).await
+      async fn retrieve_public_key(&mut self, type_: KeyType, location: KeyLocation<'_>) -> Result<PublicKey> {
+        (**self).retrieve_public_key(type_, location).await
       }
 
-      async fn generate_signature(&mut self, payload: Vec<u8>, location: KeyLocation<'_>) -> Result<Signature> {
-        (**self).generate_signature(payload, location).await
+      async fn generate_signature(
+        &mut self,
+        payload: Vec<u8>,
+        type_: KeyType,
+        location: KeyLocation<'_>,
+      ) -> Result<Signature> {
+        (**self).generate_signature(payload, type_, location).await
       }
     }
   };

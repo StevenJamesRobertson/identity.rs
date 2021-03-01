@@ -4,15 +4,15 @@
 use core::fmt::Debug;
 use core::fmt::Formatter;
 use core::fmt::Result as FmtResult;
+use identity_core::crypto::KeyType;
+use identity_core::crypto::PublicKey;
 use std::sync::Arc;
 use tokio::sync::Mutex;
-use identity_core::crypto::PublicKey;
-use identity_core::crypto::KeyType;
 
 use crate::error::Result;
-use crate::storage::VaultAdapter;
 use crate::storage::KeyLocation;
 use crate::storage::Signature;
+use crate::storage::VaultAdapter;
 
 /// A thread-safe wrapper around a [`VaultAdapter`] implementation.
 #[derive(Clone)]
@@ -50,13 +50,23 @@ impl StorageHandle {
   }
 
   /// Retrieves the public key at the specified location.
-  pub async fn retrieve_public_key(&mut self, location: KeyLocation<'_>) -> Result<PublicKey> {
-    self.data.lock().await.retrieve_public_key(location).await
+  pub async fn retrieve_public_key(&self, type_: KeyType, location: KeyLocation<'_>) -> Result<PublicKey> {
+    self.data.lock().await.retrieve_public_key(type_, location).await
   }
 
   /// Signs the given `payload` with the private key at the specified location.
-  pub async fn generate_signature(&mut self, payload: Vec<u8>, location: KeyLocation<'_>) -> Result<Signature> {
-    self.data.lock().await.generate_signature(payload, location).await
+  pub async fn generate_signature(
+    &self,
+    payload: Vec<u8>,
+    type_: KeyType,
+    location: KeyLocation<'_>,
+  ) -> Result<Signature> {
+    self
+      .data
+      .lock()
+      .await
+      .generate_signature(payload, type_, location)
+      .await
   }
 }
 
